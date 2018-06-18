@@ -1,0 +1,10 @@
+.Todo {
+  background: #0079BF;
+  height: calc(100vh - 51px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
+  overflow: auto; }
