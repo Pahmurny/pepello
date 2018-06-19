@@ -20,7 +20,6 @@ class Header extends React.Component<IProps, IState> {
   }
   public handleOutsideClick = (event: any) => {
     if (this.node.current && !this.node.current.contains(event.target)) {
-      console.log('clicked outside');
       this.setState({isEdited: false});
       document.removeEventListener('click', this.handleOutsideClick);
       this.props.onHeaderChange(this.state.newText);

@@ -68,16 +68,18 @@ class Todo extends React.Component<IProps, IState> {
   }
 
   public moveCard = (card: ICard, from: IPanel, to: IPanel) => {
-    let newPanels: Array<IPanel> = clone(this.state.panels);
-    const fromIndex = this.state.panels.findIndex(e => from === e);
-    const toIndex = this.state.panels.findIndex(e => to === e);
-    const newTo = clone(to);
-    const newFrom = clone(from);
-    newFrom.elements = from.elements.filter(e => card !== e);
-    newTo.elements.push(card);
-    newPanels[fromIndex] = newFrom;
-    newPanels[toIndex] = newTo;
-    this.setState({panels: newPanels});
+    if (from !== to) {
+      let newPanels: Array<IPanel> = clone(this.state.panels);
+      const fromIndex = this.state.panels.findIndex(e => from === e);
+      const toIndex = this.state.panels.findIndex(e => to === e);
+      const newTo = clone(to);
+      const newFrom = clone(from);
+      newFrom.elements = from.elements.filter(e => card !== e);
+      newTo.elements.push(card);
+      newPanels[fromIndex] = newFrom;
+      newPanels[toIndex] = newTo;
+      this.setState({panels: newPanels});
+    }
   }
 
   public render() {
@@ -93,7 +95,6 @@ class Todo extends React.Component<IProps, IState> {
         />
       );
     });
-    console.log('Panels list:', panelsList);
     return (
       <div className='Todo'>
         {panelsList}

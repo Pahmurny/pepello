@@ -11,10 +11,12 @@ export interface IState {
 }
 
 class CardEdit extends React.Component<IProps, IState> {
+  public node: React.RefObject<HTMLDivElement>;
   public textarea: any;
   constructor(props: IProps) {
     super(props);
     this.state = {text: ''};
+    this.node =  React.createRef();
   }
 
   public addClicked = () => {
@@ -25,10 +27,21 @@ class CardEdit extends React.Component<IProps, IState> {
     this.textarea.focus();
   }
 
+  public handleOutsideClick = (event: any) => {
+    if (this.node.current && !this.node.current.contains(event.target)) {
+      document.removeEventListener('click', this.handleOutsideClick);
+      this.props.onCancelClick();
+    }
+  }
+
+  public componentDidMount() {
+    document.addEventListener('click', this.handleOutsideClick);
+  }
+
   public render() {
     const { onCancelClick } = this.props;
     return (
-      <div className='Panel__CardEdit'>
+      <div className='Panel__CardEdit' ref={this.node}>
         <div className='Panel__CardEdit_text'>
           <Textarea
           minRows={3}
