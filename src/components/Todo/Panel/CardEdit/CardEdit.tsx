@@ -18,8 +18,10 @@ class CardEdit extends React.Component<IProps, IState> {
   }
 
   public addClicked = () => {
-    this.props.onAddClick(this.state.text);
-    this.setState({text: ''});
+    if (this.state.text.trim()) {
+      this.props.onAddClick(this.state.text.trim());
+      this.setState({text: ''});
+    }
     this.textarea.focus();
   }
 

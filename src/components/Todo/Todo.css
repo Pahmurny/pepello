@@ -8,3 +8,17 @@
   align-content: flex-start;
   align-items: flex-start;
   overflow: auto; }
+  .Todo__Creator {
+    background: rgba(0, 0, 0, 0.12);
+    padding: 12px;
+    color: #fff;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    max-width: 270px;
+    min-width: 270px;
+    margin: 10px;
+    flex: 1 1 auto;
+    align-self: auto;
+    cursor: pointer; }
+    .Todo__Creator:hover {
+      background: rgba(0, 0, 0, 0.3); }

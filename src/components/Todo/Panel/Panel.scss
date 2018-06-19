@@ -7,6 +7,13 @@
   margin: 10px;
   flex: 1 1 auto;
   align-self: auto;
+  &__DropTarget {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    min-height: 32px;
+    padding: 6px;
+    margin: 0px 8px 5px;
+  }
   &__AddCard {
     padding: 8px 10px;
     cursor: pointer;
@@ -18,8 +25,15 @@
   &__Header {
     padding: 8px 10px;
     font-weight: bold;
-   }
-   &__CardEdit {
+    line-height: 24px;
+    input {
+      width: 100%;
+      padding: 0px 5px;
+      border: 1px solid rgba(0,0,0, 0.5);
+      border-radius: 5px;
+    }
+  }
+  &__CardEdit {
     padding: 0px 8px;
     padding-bottom: 8px;
     &_text {
@@ -39,5 +53,5 @@
         outline: none;
       }
     }
-   }
+  }
 }
