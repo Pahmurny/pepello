@@ -1,6 +1,6 @@
 .Todo {
   background: #0079BF;
-  height: calc(100vh - 51px);
+  height: 100vh;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
