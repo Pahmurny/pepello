@@ -18,13 +18,14 @@ import { IPanel } from 'src/types/IPanel';
 import { ICard } from 'src/types/ICard';
 
 export interface IProps {
-  data: IPanel;
+  panel: IPanel;
   canDrop?: boolean;
   isOver?: boolean;
+  isOverCurrent?: boolean;
   connectDropTarget?: ConnectDropTarget;
   onAddCard: (panel: IPanel, card: string) => void;
   onPanelUpate: (panel: IPanel, newPanel: IPanel) => void;
-  onMoveCard?: (card: ICard, from: IPanel, to: IPanel) => void;
+  onMoveCard?: (card: ICard, from: IPanel, to: IPanel, over?: ICard) => void;
 }
 
 export interface IState {
@@ -32,8 +33,19 @@ export interface IState {
 }
 
 const boxTarget = {
-  drop(panel: IProps) {
-    return { panel };
+  drop(
+    props: IProps,
+    monitor: DropTargetMonitor,
+    component: React.Component | null,
+  ) {
+    if (!component) {
+      return;
+    }
+    const hasDroppedOnChild = monitor.didDrop();
+    if (hasDroppedOnChild) {
+      return;
+    }
+    return { panel: props.panel };
   },
 };
 
@@ -44,6 +56,7 @@ const boxTarget = {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
     canDrop: monitor.canDrop(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
   }),
 )
 class Panel extends React.Component<IProps, IState> {
@@ -58,7 +71,7 @@ class Panel extends React.Component<IProps, IState> {
   }
 
   public onAddClick = (text: string) => {
-    this.props.onAddCard(this.props.data, text);
+    this.props.onAddCard(this.props.panel, text);
   }
 
   public onCancelClick = () => {
@@ -66,29 +79,29 @@ class Panel extends React.Component<IProps, IState> {
   }
 
   public updateHeader = (name: string) => {
-    const updatedPanel: IPanel = {...this.props.data, name};
-    this.props.onPanelUpate(this.props.data, updatedPanel);
+    const updatedPanel: IPanel = {...this.props.panel, name};
+    this.props.onPanelUpate(this.props.panel, updatedPanel);
   }
 
-  public moveCard = (card: ICard, panel: IPanel) => {
+  public moveCard = (card: ICard, to: IPanel, over?: ICard) => {
     if (this.props.onMoveCard) {
-      this.props.onMoveCard(card, this.props.data, panel);
+      this.props.onMoveCard(card, this.props.panel, to, over);
     }
   }
 
   public render() {
-    const { data, canDrop, isOver, connectDropTarget } = this.props;
-    const isActive = canDrop && isOver;
-    const cards = data.elements.map((e, i) => {
+    const { panel, canDrop, isOverCurrent, connectDropTarget } = this.props;
+    const isActive = canDrop && isOverCurrent;
+    const cards = panel.elements.map((e, i) => {
       return (
-        <Card data={e} key={i} onCardMove={this.moveCard}/>
+        <Card card={e} panel={panel} key={i} onCardMove={this.moveCard}/>
       );
     });
     return (
       connectDropTarget &&
       connectDropTarget(
       <div className='Panel'>
-        <Header text={data.name} onHeaderChange={this.updateHeader}/>
+        <Header text={panel.name} onHeaderChange={this.updateHeader}/>
         {cards}
         {isActive && <div className='Panel__DropTarget'></div>}
         { this.state.isNewCard ?

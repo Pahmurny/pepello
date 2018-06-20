@@ -31,6 +31,12 @@
   .Panel__CardEdit {
     padding: 0px 8px;
     padding-bottom: 8px; }
+    .Panel__CardEdit_cancel {
+      border: none;
+      background: transparent; }
+      .Panel__CardEdit_cancel:hover {
+        background: transparent;
+        color: rgba(0, 0, 0, 0.6); }
     .Panel__CardEdit_text {
       background: white;
       border-radius: 3px;

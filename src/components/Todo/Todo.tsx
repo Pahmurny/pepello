@@ -21,7 +21,9 @@ const panelsInit: Array<IPanel> = [
     name: 'Panlel1',
     elements: [
       {name: 'card1'},
-      {name: 'card2'}
+      {name: 'card2'},
+      {name: 'card3'},
+      {name: 'card4'},
     ],
   },
   {
@@ -30,7 +32,12 @@ const panelsInit: Array<IPanel> = [
   },
   {
     name: 'Panlel3',
-    elements: [],
+    elements: [
+      {name: 'card3-1'},
+      {name: 'card3-2'},
+      {name: 'card3-3'},
+      {name: 'card3-4'},
+    ],
   },
 ];
 
@@ -50,7 +57,6 @@ class Todo extends React.Component<IProps, IState> {
 
   public onAddCard(data: IPanel, card: string = 'New Card') {
     let oldPanels: Array<IPanel> = clone(this.state.panels);
-    console.log('Old panels', oldPanels);
     const index = this.state.panels.findIndex(e => data === e);
     const newCard: ICard = {
       name: card,
@@ -67,19 +73,30 @@ class Todo extends React.Component<IProps, IState> {
     this.setState({panels: [...this.state.panels, newPanel]});
   }
 
-  public moveCard = (card: ICard, from: IPanel, to: IPanel) => {
+  public moveCard = (card: ICard, from: IPanel, to: IPanel, over?: ICard) => {
+    let newPanels: Array<IPanel> = clone(this.state.panels);
+    const fromIndex = this.state.panels.findIndex(e => from === e);
+    const toIndex = this.state.panels.findIndex(e => to === e);
+    const overIndex = this.state.panels[toIndex].elements.findIndex(e => over === e);
+    const newTo = clone(to);
+    const newFrom = clone(from);
+    newFrom.elements = from.elements.filter(e => card !== e);
     if (from !== to) {
-      let newPanels: Array<IPanel> = clone(this.state.panels);
-      const fromIndex = this.state.panels.findIndex(e => from === e);
-      const toIndex = this.state.panels.findIndex(e => to === e);
-      const newTo = clone(to);
-      const newFrom = clone(from);
-      newFrom.elements = from.elements.filter(e => card !== e);
-      newTo.elements.push(card);
-      newPanels[fromIndex] = newFrom;
+      if (over) {
+        newTo.elements.splice(overIndex, 0, card);
+      } else {
+        newTo.elements.push(card);
+      }
       newPanels[toIndex] = newTo;
-      this.setState({panels: newPanels});
+    } else {
+      if (over) {
+        newFrom.elements.splice(overIndex, 0, card);
+      } else {
+        newFrom.elements.push(card);
+      }
     }
+    newPanels[fromIndex] = newFrom;
+    this.setState({panels: newPanels});
   }
 
   public render() {
@@ -88,7 +105,7 @@ class Todo extends React.Component<IProps, IState> {
       return (
         <Panel
           key={i}
-          data={e}
+          panel={e}
           onAddCard={this.onAddCard}
           onPanelUpate={this.updatePanel}
           onMoveCard={this.moveCard}

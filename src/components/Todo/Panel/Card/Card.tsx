@@ -4,6 +4,10 @@ import {
   DragSource,
   DragSourceConnector,
   DragSourceMonitor,
+  DropTarget,
+  DropTargetConnector,
+  DropTargetMonitor,
+  ConnectDropTarget,
 } from 'react-dnd';
 
 import { ICard } from 'src/types/ICard';
@@ -14,16 +18,21 @@ import ItemTypes from '@constants/DnD';
 import './Card.css';
 
 export interface IProps {
-  data: ICard;
+  card: ICard;
+  panel: IPanel;
   isDragging?: boolean;
+  canDrop?: boolean;
+  isOver?: boolean;
   connectDragSource?: ConnectDragSource;
-  onCardMove?: (card: ICard, panel: IPanel) => void;
+  connectDropTarget?: ConnectDropTarget;
+  onCardMove?: (card: ICard, to: IPanel, over?: ICard) => void;
 }
 
 const boxSource = {
   beginDrag(props: IProps) {
     return {
-      data: props.data,
+      card: props.card,
+      panel: props.panel,
     };
   },
 
@@ -32,11 +41,31 @@ const boxSource = {
     const dropResult = monitor.getDropResult();
 
     if (dropResult && props.onCardMove) {
-      props.onCardMove(item.data, dropResult.panel.data);
+      console.log('Moving card', item.card, ' to ', dropResult.panel, 'over', dropResult.card);
+      props.onCardMove(item.card, dropResult.panel, dropResult.card);
     }
   },
 };
 
+const boxTarget = {
+  drop(props: IProps) {
+    return {
+      card: props.card,
+      panel: props.panel,
+    };
+  },
+};
+
+@DropTarget(
+  ItemTypes.CARD,
+  boxTarget,
+  (connect: DropTargetConnector, monitor: DropTargetMonitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
+  }),
+)
 @DragSource(
   ItemTypes.CARD,
   boxSource,
@@ -47,14 +76,20 @@ const boxSource = {
 )
 class Card extends React.Component<IProps> {
   public render() {
-    const { connectDragSource } = this.props;
-    const {data} = this.props;
+    const { connectDragSource, connectDropTarget, isOver } = this.props;
+    // const display = isDragging ? 'none' : 'visible';
+    const isOverClass = isOver ? 'isOver' : '';
+    const {card} = this.props;
     return (
-      connectDragSource &&
+      connectDragSource && connectDropTarget &&
       connectDragSource(
-      <div className='Card'>
-        {data.name}
-      </div>
+        connectDropTarget(
+          <div className={`Card ${isOverClass}`}>
+            <div className={`Card__Content`}>
+              {card.name}
+            </div>
+          </div>
+        )
       )
     );
   }

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Textarea from 'react-textarea-autosize';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 export interface IProps {
   onAddClick: (text: string) => void;
@@ -53,8 +54,8 @@ class CardEdit extends React.Component<IProps, IState> {
           />
         </div>
         <div>
-          <button onClick={this.addClicked}>Add</button>
-          <button onClick={onCancelClick}>X</button>
+          <Button bsStyle='success' onClick={this.addClicked}>Add</Button>
+          <Button className='Panel__CardEdit_cancel' onClick={onCancelClick}><Glyphicon glyph='remove' /></Button>
         </div>
       </div>
     );
